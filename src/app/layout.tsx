@@ -8,6 +8,9 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 export const metadata: Metadata = {
     title: "Danny Dev Blog",
     description: "개인 공부 기록용 블로그",
+    icons: {
+        icon: "/assets/favicon.ico"
+    }
 };
 
 export default function RootLayout({
