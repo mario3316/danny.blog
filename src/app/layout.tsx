@@ -6,8 +6,8 @@ import Footer from "@/layouts/Footer";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 
 export const metadata: Metadata = {
-    title: "swhana | FE Engineer",
-    description: "프론트엔드 개발자 한상원입니다.",
+    title: "Danny Dev Blog",
+    description: "개인 공부 기록용 블로그",
 };
 
 export default function RootLayout({

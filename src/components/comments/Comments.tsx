@@ -17,7 +17,8 @@ export default function Comments() {
         scriptElem.async = true;
         scriptElem.crossOrigin = "anonymous";
 
-        scriptElem.setAttribute("data-repo", "swhana/swhana.blog");
+        scriptElem.setAttribute("data-repo", "mario3316/danny.blog");
+        // TODO git repo 연동
         scriptElem.setAttribute("data-repo-id", "R_kgDOMnONuw");
         scriptElem.setAttribute("data-category", "Comments");
         scriptElem.setAttribute("data-category-id", "DIC_kwDOMnONu84Ch91f");
