@@ -1,0 +1,209 @@
+---
+title: "객체지향 프로그래밍 - 1"
+date: 2024-09-22
+description: OOP란, Encapsulation, Inheritance에 대해
+thumbnail: /blog/posts/Java/java-logo-1.png
+---
+
+
+사실 OOP는 대학교 1학년때 배우고 지금까지 당연하게 써왔다.  
+기계적으로 당연하게 생각했던 개념들을 다시 한번 정리하여 그 본질을 다시 깨닫고 문제 해결의 도구로 이해하기 위해 이 포스트를 작성한다.
+
+개발자들은 항상 객체지향적 사고방식을 키워야 한다고 생각한다.  
+그 이유는,
+- 복잡한 요구사항을 객체로 모델링하고 시스템을 설계할 수 있다.
+- 코드의 확장성과 유연성을 고려하며 개발할 수 있다.
+- 큰 문제를 쪼개고 추상화하여 각 부분에서 핵심적인 부분에만 집중할 수 있다.
+- 여러 사람과 협업할때 코드의 가독성, 유지보수성을 높일 수 있다.
+
+개발자는 OOP를 통해 복잡한 문제를 단순하게 표현하고 해결가능하고 개발자간 혹은 기획자와의 의사소통에서도 공통 언어로 사용할 수 있다.
+
+## 객체지향 프로그래밍이란?
+책에서 맨 처음 나올법한 이야기이지만 객체지향 프로그래밍이 왜 시작되었고, 어떤 역사가 있는지 한번쯤은 알아보자.
+
+처음 프로그래밍은 미사일 발사나 과학 실험과 같은 복잡한 시뮬레이션을 구현하기 위해 사용되었다. 1960년 노르웨이의 Ole-Johan Dahl과 Kristen Nygaard가 시뮬레이션에  사용하기 위해 **Simula** 라는 언어를 최초로 개발했고 여기서 최초로 **클래스** 와 **객체** 라는 개념이 시작되었다. 실세계의 사물들을 클래스와 객체라는 개념으로 대입해서 컴퓨터 프로그램으로 표현하는 방식의 시작이다. 사실 처음 객체지향 프로그래밍이 나왔을 때부터 지금과 같이 메인 스트림 패러다임은 아니였다. 하지만 프로그램의 규모가 점점 커지고 요구사항이 빠르게 변해가는 상황에서 객체 지향 프로그래밍 언어가 주류가 되었다.
+
+객체지향 프로그래밍이란 복잡한 프로그램을 **객체(Object)** 단위로 나누고, 이 객체들이 서로 상호작용하며 프로그램을 구성하는 프로그래밍 패러다임이다. 실제 사물의 속성과 기능을 객체의 **속성(Property)** 와 **메소드(Method)** 로 대응하여 실세계의 개념을 소프트웨어로 표현한다.
+
+## 객체지향 프로그래밍의 핵심 원칙
+객체지향 프로그래밍을 처음 배울때부터 항상 보는 4가지 원칙을 예시와 함께 정리해보았다.
+
+### 1. 캡슐화 (Encapsulation)
+**캡슐화** 란 객체의 Property와 Method를 외부로 부터 보호하고, **접근 제어자**를 통해 객체 내부 데이터는 객체가 제공하는 메소드로만 접근할 수 있도록 하는 개념이다. 이를 통해 중요한 데이터의 **무결성**을 유지하고, 코드의 안정성을 높일 수 있다. 또한, 외부에서는 객체가 제공하는 인터페이스를 통해서만 데이터를 접근하므로 내부적으로 어떻게 동작하는지 몰라도되어 코드의 유지보수성과 재사용성을 높일 수 있다.
+
+User라는 클래스를 예시로 들어보자.
+
+먼저 캡슐화가 적용되어 있지 않은 User 클래스이다
+```java
+public class User {
+	public String username;
+	public String password;
+}
+```
+
+위 코드의 문제점은 아무데서나 User의 `username`, `password`, `email`을 마음대로 바꿀 수 있다는 것이다. 어떤 코드에서 비밀번호 보안 요구사항을 충족하지 않는 `user.password = "123"` 혹은 `user.username = null` 와 말도 안되는 값을 충분히 저장할 가능성이 있다. 그리고 만약 프로젝트의 규모가 커진다면 어떤 코드로 인해 데이터가 깨졌는지 찾기 어려워 질것이다.
+
+```java
+public class User {
+	private String username;
+	private String password;
+
+	public User(String username, String password){
+		setUsername(username);
+		setPassword(password);
+	}
+
+	// Getter 생략
+
+	public void setUsername(String username){
+		if (username == null || username.isEmpty())
+			throw new IllegalArgumentException("Username cannot be null or empty");
+
+		if (!username.matches("^[a-zA-Z0-9]{1,12}$"))
+			throw new IllegalArgumentException("Invalid username format");
+			
+		this.username = username;
+	}
+
+	public void setPassword(String password){
+		if (password == null || password.isEmpty())
+			throw new IllegalArgumentException("Password cannot be null or empty");
+
+		if (!password.matches("^[a-zA-Z0-9]{1,12}$"))
+			throw new IllegalArgumentException("Invalid password format");
+
+		this.password = bcryptPasswordEncoder.encode(password);
+	}
+}
+```
+
+위와 같이 캡슐화를 통해 요구사항을 충족하지 않거나 암호화 되지 않은 값이 들어가는 상황을 방지할 수 있다. 또한 예를 들어 비밀번호에 특수문자 최소 1개를 포함해야 한다는 등의 요구사항이 생길때 위 `setPassword()` 의 메소드에 validation 만 추가해주면 된다.
+
+접근제어자는 클래스, 메소드, 변수 등에 대한 접근 범위를 설정하는 키워드고 종류는 아래들과 같다.
+
+| 접근 제어자  | 설명                                                                 |
+|--------------|----------------------------------------------------------------------|
+| `public`     | 모든 곳에서 접근 가능, 외부 클래스나 패키지에서도 접근 가능           |
+| `private`    | 해당 클래스 내에서만 접근 가능, 외부에서 접근 불가능                  |
+| `protected`  | 같은 패키지 내에서 접근 가능, 상속받은 클래스에서도 접근 가능          |
+| `default`    | 접근 제어자를 명시하지 않으면 적용, 같은 패키지 내에서만 접근 가능    |
+
+### 2. 상속 (Inheritance)
+상속이란 자식 클래스가 부모 클래스로 부터 속성과 메소드를 물려받아 재사용 하는 개념이다. 상속을 이용하면 공통 기능을 묶어 코드의 중복을 없애고, overriding을 통해 기존 기능을 재정의할 수 있다.
+
+예를 들어, 위 예시로 들었던 User 중 Admin, Customer 등 여러가지 종류의 User 를 만들고 싶을 수 있다. 만약 Inheritance를 사용하지 않으면 매번 User 종류를 만들때마다 똑같은 프로퍼티, 메소드를 반복할 것이다.
+```java
+// 관리자
+public class Admin {
+	private String username;
+	private String password;
+	private String adminRole;
+
+	public Admin(String username, String password, String adminRole){
+		setUsername(username);
+		setPassword(password);
+		setAdminRole(adminRole);
+	}
+
+	// Getter, Setter
+
+	public void updateRole(String newRole) ...
+}
+
+// 고객
+public class Customer {
+	private String username;
+	private String password;
+	private String shippingAddress;
+	private CreditCard creditCard;
+
+	public Customer(String username, String password, String shippingAddress, CreditCard creditCard){
+		setUsername(username);
+		setPassword(password);
+		setShippingAddress(shippingAddress);
+		setCreditCard(creditCard);
+	}
+
+	// Getter, Setter
+
+	public void addToCart(String item) ...
+}
+```
+
+이렇게 하기보단 Admin과 Customer를 User의 한 종류로 보고 User 클래스를 부모 클래스, Admin과 Customer를 자식 클래스로 정의하는게 훨씬 깔끔하다. 그리고 만약 Admin과 Customer만 가질 수 있는 추가적인 프로퍼티나 메소드가 있다면 그것들만 추가로 정의해주면 된다.
+
+```java
+public class User {
+	private String username;
+	private String password;
+
+	// Constructor, Getter, Setter ...
+
+	public void resetPassword(String newPassword) ...
+}
+
+public class Admin extends User {
+	private String adminRole;
+
+	public Admin(String username, String password, String adminRole) { 
+		super(username, password, email);
+		setAdminRole(adminRole);
+	}
+
+	@Override
+	public void resetPassword(String newPassword){
+		// Admin 유저에 대한 비밀번호 변경 로직
+	}
+
+	public void updateRole(String newRole) ...
+}
+
+public class Customer extends User {
+	private String shippingAddress;
+	private CreditCard creditCard;
+
+	public Customer(String username, String password, String shippingAddress, CreditCard creditCard){
+		super(username, password);
+		setShippingAddress(shippingAddress);
+		setCreditCard(creditCard);
+	}
+
+	@Override
+	public void resetPassword(String newPassword){
+		// Customer 유저에 대한 비밀번호 변경 로직
+	}
+
+	public void addToCart(String item) ...
+}
+```
+
+위와 같이 상속을 이용하여 중복 코드를 제거하고, 코드를 확장성 있게 구현할 수 있다 (만약 Admin, Customer 말고 판매자가 생기면 판매자에 대한 클래스만 추가해주면 된다.)
+
+#### 타입 호환성
+상속을 사용할때 타입 호환성에 대한 개념을 짚고 넘어가야 한다. 타입 호환성은 추후 SOLID 원칙을 포스팅할때 더 자세하게 정리할 **리스코프 치환 원칙** 과도 관련이 깊다.
+> 리스코프 치환 원칙 (Liskov Substitution Principle
+> 자식 클래스는 상위 클래스의 역할을 완전히 대체할 수 있어야 한다는 원칙. 프로그램에서 부모 클래스의 객체를 사용하는 모든 곳에서 자식 클래스로 교체하더라도 프로그램은 정상적으로 동작해야 한다.
+
+##### 1. 자식 객체는 부모 타입으로 간주될 수 있다.
+```java
+User user1 = new Admin();
+User user2 = new Customer();
+```
+자식 클래스는 부모 클래스의 모든 속성과 메소드를 상속받기 때문에 자식 클래스는 부모 클래스 타입이라고도 할 수 있다. 따라서 부모 타입으로 자식 클래스의 객체를 참조하는 것도 가능하다. 그리고 이것을 **업캐스팅** 이라고 한다.
+
+##### 2. 부모 객체는 자식 타입이 될 수 없다.
+```java
+Admin admin = new User();
+Customer customer = new User();
+```
+부모 클래스는 자식 클래스가 가진 추가적인 프로퍼티나 메소드를 알지 못한다. 자식 타입으로 부모 객체를 참조하는 것을 **다운캐스팅** 이라고 하며 다운 캐스팅 시 런타임에서 오류가 발생한다.
+
+만약, 다운 캐스팅이 불가피하게 필요하다면 안전하게 다운 캐스팅 해야한다.
+```java
+User user = new Admin();
+
+// 타입 검사를 통한 안전한 다운 캐스팅
+if (user instanceof Admin) {
+	Admin admin = (Admin) user;
+}
+```
